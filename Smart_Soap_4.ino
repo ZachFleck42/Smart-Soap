@@ -10,8 +10,10 @@ char pass[] = "YOUR_WIFI_PASS_HERE";
 WiFiSSLClient client;
 
 // Initialize server stuff
-char endpoint_server[] = "YOUR_ENDPOINT_SERVER_HERE";
-char timestamp_server[] = "YOUR_TIMESTAMP_SERVER_HERE";
+String endpoint_server = "YOUR_ENDPOINT_SERVER_HERE";
+String endpoint_path = "YOUR_ENDPOINT_PATH_HERE";
+String timestamp_server = "YOUR_TIMESTAMP_SERVER_HERE";
+String timestamp_path = "YOUR TIMESTAMP_PATH_HERE";
 
 // Initialize sensor stuff
 #define SENSOR_PIN      A0
@@ -156,7 +158,9 @@ String getTimestamp() {
   }
 
   // If successfully connected, send a GET request
-  client.println("GET /api/ip HTTP/1.1");
+  client.print("GET ");
+  client.print(timestamp_path);
+  client.println(" HTTP/1.1");
   client.print("Host: ");
   client.println(timestamp_server);
   client.println("Connection: close");
@@ -206,8 +210,9 @@ void postData(String payload) {
   // Attempt to connect to the endpoint
   if (client.connect(endpoint_server, 443)) {
     Serial.println("Connected to endpoint API");
-
-    client.println("POST /v1/publishEvent/soap-101 HTTP/1.1");
+    client.print("POST ");
+    client.print(endpoint_path);
+    client.println(" HTTP/1.1");
     client.print("Host: ");
     client.println(endpoint_server);
     client.println("User-Agent: Arduino/1.0");
