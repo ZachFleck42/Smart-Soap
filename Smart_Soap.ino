@@ -5,14 +5,14 @@
 #include "base64.hpp"
 
 // Initialize WiFi stuff
-char ssid[] = "YOUR_WIFI_SSID_HERE";
-char pass[] = "YOUR_WIFI_PASS_HERE";
+char[] ssid = "YOUR_WIFI_SSID_HERE";
+char[] pass = "YOUR_WIFI_PASS_HERE";
 WiFiSSLClient client;
 
 // Initialize server stuff
-String endpoint_server = "YOUR_ENDPOINT_SERVER_HERE";
+char[] endpoint_server = "YOUR_ENDPOINT_SERVER_HERE";
 String endpoint_path = "YOUR_ENDPOINT_PATH_HERE";
-String timestamp_server = "YOUR_TIMESTAMP_SERVER_HERE";
+char[] timestamp_server = "YOUR_TIMESTAMP_SERVER_HERE";
 String timestamp_path = "YOUR TIMESTAMP_PATH_HERE";
 
 // Initialize sensor stuff
@@ -28,7 +28,7 @@ float newValue      = 0;
 
 // Intialize buffer values
 #define BUFFER_SIZE 15
-float buffer[BUFFER_SIZE] = {0};
+float[BUFFER_SIZE] buffer = {0};
 int buffer_index = 0;
 
 
