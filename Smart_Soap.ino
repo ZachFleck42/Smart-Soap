@@ -2,7 +2,6 @@
 #include <cmath>
 #include <iostream>
 #include <WiFiNINA.h>
-#include "base64.hpp"
 
 // Initialize WiFi stuff
 char[] ssid = "YOUR_WIFI_SSID_HERE";
@@ -55,20 +54,20 @@ void setup(void) {
 
 void loop(void) {
   // Read the sensor and convert to a digital value
-  float sensorValue = analogRead(SENSOR_PIN);
+  float sensor_value = analogRead(SENSOR_PIN);
 
   // Calculate the current resistance of the sensor
-  float sensorResistance = calculateResistance(sensorValue);
+  float sensor_resistance = calculateResistance(sensor_value);
 
   // Check to see if a new stable value has been found
   for (int i = 0; i < BUFFER_SIZE; i++) {
-    int valueCount = 0;
+    int value_count = 0;
     for (int j = 0; j < BUFFER_SIZE; j++) {
-      if (buffer[i] == buffer[j]) {valueCount++;}
+      if (buffer[i] == buffer[j]) {value_count++;}
     }
 
     // If a stable value has been found, remember it
-    if (valueCount >= (BUFFER_SIZE / 2 + 1)) {
+    if (value_count >= (BUFFER_SIZE / 2 + 1)) {
       new_value = buffer[i];
       break;
     }
@@ -110,7 +109,7 @@ void loop(void) {
   // Reset the buffer_index if necessary
   if (BUFFER_SIZE == buffer_index) {buffer_index = 0;}
 
-  buffer[buffer_index++] = sensorResistance;
+  buffer[buffer_index++] = sensor_resistance;
   delay(1000);
 }
 
@@ -133,14 +132,14 @@ float printWiFiData() {
 }
 
 
-float calculateResistance(float sensorValue) {
-  float Vout = (sensorValue * VIN) / 1024.0;
+float calculateResistance(float sensor_value) {
+  float Vout = (sensor_value * VIN) / 1024.0;
   return KNOWN_RESISTOR * ((VIN / Vout) - 1);
 }
 
 
-float calculateVolume(float sensorResistance) {
-  float difference = max_resistance - sensorResistance;
+float calculateVolume(float sensor_resistance) {
+  float difference = max_resistance - sensor_resistance;
   return difference / (max_resistance - min_resistance) * 100;
 }
 
@@ -187,19 +186,8 @@ String getTimestamp() {
 }
 
 
-String createPayload(int soapLevel, String timestamp) {
-  // Create a very long string of necessary data
-  String soapLevelStr = String(soapLevel);
-  String dataString = "{\"Events\":[{\"USER_ID\":\"1\",\"DEVICE_ID\":\"111111\",\"TAG_TYPE\":\"gen2\",\"TID\":\"11111\",\"SCAN\":\"11-22-33\",\"SOAP_LEVEL\":" + soapLevelStr + ",\"DEVICE_HOST_NAME\":\"soap-101\",\"DEVICE_TYPE\":\"soapDispenser\",\"DEVICE_SERIALNO\":\"3234234\",\"EVENT_TYPE\":\"rfid\",\"EVENT_PRIORITY\":\"info\",\"EVENT_DATETIME\":\"" + timestamp + "\",\"CREATE_DATETIME\":\"" + timestamp + "\"}]}";
-
-  // Encode the dataString into base64
-  const char* data = dataString.c_str();
-  size_t dataLength = strlen(data);
-  char encodedData[BASE64::encodeLength(dataLength)];
-  BASE64::encode((const uint8_t*)data, dataLength, encodedData);
-
-  // Wrap the encodedData and return the complete payload
-  String payload = "{\"message\":{\"data\":\"" + (String)encodedData + "\"}}";
+String createPayload(int soap_level, String timestamp) {
+  String payload = "{\"data\": {\"soap_level\": \"" + String(soap_level) + "\", \"timestamp\": \"" + timestamp + "\"}}";
   return payload;
 }
 
