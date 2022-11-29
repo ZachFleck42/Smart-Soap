@@ -10,10 +10,10 @@ char[] pass = "YOUR_WIFI_PASS_HERE";
 WiFiSSLClient client;
 
 // Initialize server stuff
-char[] endpoint_server = "YOUR_ENDPOINT_SERVER_HERE";
-String endpoint_path = "YOUR_ENDPOINT_PATH_HERE";
+char[] endpoint_server  = "YOUR_ENDPOINT_SERVER_HERE";
+String endpoint_path    = "YOUR_ENDPOINT_PATH_HERE";
 char[] timestamp_server = "YOUR_TIMESTAMP_SERVER_HERE";
-String timestamp_path = "YOUR TIMESTAMP_PATH_HERE";
+String timestamp_path   = "YOUR TIMESTAMP_PATH_HERE";
 
 // Initialize sensor stuff
 #define SENSOR_PIN      A0
@@ -21,10 +21,10 @@ String timestamp_path = "YOUR TIMESTAMP_PATH_HERE";
 #define VIN             3.3
 
 // Intialize calibration values
-float maxResistance = 0;
-float minResistance = 0;
-float stableValue   = 100;
-float newValue      = 0;
+float max_resistance = 0;
+float min_resistance = 0;
+float stable_value   = 100;
+float new_value      = 0;
 
 // Intialize buffer values
 #define BUFFER_SIZE 15
@@ -69,18 +69,18 @@ void loop(void) {
 
     // If a stable value has been found, remember it
     if (valueCount >= (BUFFER_SIZE / 2 + 1)) {
-      newValue = buffer[i];
+      new_value = buffer[i];
       break;
     }
   }
 
   // If there's a new stable value and it's significantly different, post it
-  if (newValue && (abs(stableValue - newValue) > 25)) {
-    stableValue = newValue;
-    newValue = 0;
+  if (new_value && (abs(stable_value - new_value) > 25)) {
+    stable_value = new_value;
+    new_value = 0;
 
     // Calculate volume and adjust if necessary
-    float volume = calculateVolume(stableValue);
+    float volume = calculateVolume(stable_value);
     if (volume >= 95) {volume = 100;}
     if (volume <= 5) {volume = 0;}
 
@@ -105,7 +105,7 @@ void loop(void) {
     Serial.println("Sucessfully posted to endpoint");
     Serial.println();
   }
-  else {newValue = 0;}
+  else {new_value = 0;}
 
   // Reset the buffer_index if necessary
   if (BUFFER_SIZE == buffer_index) {buffer_index = 0;}
@@ -140,8 +140,8 @@ float calculateResistance(float sensorValue) {
 
 
 float calculateVolume(float sensorResistance) {
-  float difference = maxResistance - sensorResistance;
-  return difference / (maxResistance - minResistance) * 100;
+  float difference = max_resistance - sensorResistance;
+  return difference / (max_resistance - min_resistance) * 100;
 }
 
 
