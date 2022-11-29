@@ -60,7 +60,7 @@ void loop(void) {
   // Calculate the current resistance of the sensor
   float sensorResistance = calculateResistance(sensorValue);
 
-  // Check to see if 8 or more values from the last 15 seconds are the same
+  // Check to see if a new stable value has been found
   for (int i = 0; i < BUFFER_SIZE; i++) {
     int valueCount = 0;
     for (int j = 0; j < BUFFER_SIZE; j++) {
@@ -68,7 +68,7 @@ void loop(void) {
     }
 
     // If a stable value has been found, remember it
-    if (valueCount >= 8) {
+    if (valueCount >= (BUFFER_SIZE / 2 + 1)) {
       newValue = buffer[i];
       break;
     }
@@ -98,8 +98,6 @@ void loop(void) {
     Serial.println("Creating a payload...");
     String payload = createPayload(volume, timestamp);
     Serial.println("Payload created");
-
-    // delay(3000);
 
     // Post the data
     Serial.println("Posting the data to endpoint...");
